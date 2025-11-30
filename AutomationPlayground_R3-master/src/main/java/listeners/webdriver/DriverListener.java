@@ -1,0 +1,182 @@
+package listeners.webdriver;
+
+import org.openqa.selenium.*;
+import org.openqa.selenium.support.events.WebDriverListener;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.FluentWait;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.net.URL;
+import java.time.Duration;
+import java.util.Arrays;
+import java.util.NoSuchElementException;
+
+import static utilities.PropertiesManager.frameworkConfig;
+
+public class DriverListener implements WebDriverListener {
+
+    private WebDriver driver;
+
+    public DriverListener(WebDriver driver){
+        this.driver = driver;
+    }
+
+    /************************************* Browser Actions Listeners ******************************************/
+
+    @Override
+    public void afterGet(WebDriver driver, String url) {
+        System.out.println("Getting to \"" + url + "\".");
+    }
+
+//    @Override
+//    public void afterGetCurrentUrl(String result, WebDriver driver) {
+//        System.out.println("Current url is: \"" + result + "\".");
+//    }
+
+    @Override
+    public void afterGetTitle(WebDriver driver, String result) {
+        System.out.println("Current Page Title is: \"" + result + "\".");
+    }
+
+    @Override
+    public void afterTo(WebDriver.Navigation navigation, String url) {
+        System.out.println("Navigating to url \"" + url + "\".");
+    }
+
+    @Override
+    public void afterTo(WebDriver.Navigation navigation, URL url) {
+        System.out.println("Navigating to url \"" + url + "\".");
+    }
+
+    @Override
+    public void afterBack(WebDriver.Navigation navigation) {
+        System.out.println("Navigating back.");
+    }
+
+    @Override
+    public void afterForward(WebDriver.Navigation navigation) {
+        System.out.println("Navigating forward.");
+    }
+
+    @Override
+    public void afterRefresh(WebDriver.Navigation navigation) {
+        System.out.println("Refreshing current page......");
+    }
+
+    @Override
+    public void afterGetPageSource(WebDriver driver, String result) {
+        System.out.println("Getting Page source: " + result);
+    }
+
+    @Override
+    public void beforeDeleteCookie(WebDriver.Options options, Cookie cookie) {
+        System.out.println("Deleting Cookie: " + cookie + " ......");
+    }
+
+    @Override
+    public void beforeDeleteAllCookies(WebDriver.Options options) {
+        System.out.println("Deleting All Cookies.....");
+    }
+
+
+    /************************************* Element Actions Listeners ******************************************/
+    @Override
+    public void beforeFindElement(WebDriver driver, By locator) {
+        System.out.println("Finding element: " + locator.toString());
+
+        try {
+            new WebDriverWait(driver,
+                    Duration.ofSeconds(Long.parseLong(frameworkConfig.getProperty("elementIdentificationTimeout"))))
+                    .ignoring(NoSuchElementException.class)
+                    .ignoring(StaleElementReferenceException.class)
+                    .until(ExpectedConditions.visibilityOfElementLocated(locator));
+
+        } catch (TimeoutException e) {
+            System.out.println("Element not found within timeout: " + locator);
+            throw e;
+        }
+    }
+
+
+    @Override
+    public void afterClose(WebDriver driver) {
+        System.out.println("Successfully Closed Driver.");
+    }
+
+    @Override
+    public void afterQuit(WebDriver driver) {
+        System.out.println("Successfully Quit Driver.");
+    }
+
+@Override
+public void beforeClick(WebElement element) {
+
+    System.out.println("Wait for " + getElementName(element) + " to be clickable");
+
+    try {
+        new WebDriverWait(driver,
+                Duration.ofSeconds(Long.parseLong(frameworkConfig.getProperty("actionTimeout"))))
+                .ignoring(StaleElementReferenceException.class)
+                .until(ExpectedConditions.elementToBeClickable(element));
+    } catch (TimeoutException e) {
+        System.out.println("Element not clickable: " + getElementName(element));
+        throw e;
+    }
+
+    System.out.println("Click on " + getElementName(element));
+}
+
+
+    @Override
+    public void beforeSubmit(WebElement element) {
+        try {
+            System.out.println("Submit " + getElementName(element) + ".");
+        } catch (Exception throwable) {
+            System.out.println("Submit.");
+        }
+    }
+
+
+    @Override
+    public void beforeClear(WebElement element) {
+        System.out.println("Clear " + getElementName(element) + ".");
+    }
+
+    @Override
+    public void afterGetAttribute(WebElement element, String name, String result) {
+        try {
+            System.out.println("Get Attribute \"" + name + "\" from " + getElementName(element) + ", value is \"" + result + "\".");
+        } catch (Exception throwable) {
+            System.out.println("Get Attribute \"" + name + "\", value is \"" + result + "\".");
+        }
+    }
+
+    @Override
+    public void afterGetText(WebElement element, String result) {
+        try {
+            System.out.println("Get Text from " + getElementName(element) + ", text is \"" + result + "\".");
+        } catch (Exception throwable) {
+            System.out.println("Get Text, text is :\"" + result + "\".");
+        }
+    }
+
+
+    // Alert
+
+    @Override
+    public void beforeSendKeys(Alert alert, String text) {
+        System.out.println("Type \"" + text + "\" into Alert.");
+    }
+
+
+    private String getElementName(WebElement element) {
+        String accessibleName = element.getAccessibleName();
+        if ("".equals(accessibleName)) {
+            return "element";
+        } else {
+            return "\"" + accessibleName + "\"";
+        }
+    }
+
+
+}
