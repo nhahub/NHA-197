@@ -8,7 +8,7 @@ Botamina Kamel
 ## Project Folders
 - `API-Testing/` → Postman collections + environment + test results
 - `Automation-Testing/` → Selenium + TestNG + Maven (IntelliJ project)
-- `Manual-Testing/` → Google Sheet exported as Excel & PDF
+- `Manual-Testing/` → Google Sheet exported as Excel
 - `Reports/` & `Screenshots/` → Test reports and evidence
 
 ## How to Run Automation
