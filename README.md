@@ -9,8 +9,6 @@ Botamina Kamel
 - `API-Testing/` → Postman collections + environment + test results
 - `Automation-Testing/` → Selenium + TestNG + Maven (IntelliJ project)
 - `Manual-Testing/` → Google Sheet exported as Excel
-- `Reports/` & `Screenshots/` → Test reports and evidence
-
 ## How to Run Automation
 ```bash
 # Open Automation-Testing folder in IntelliJ
